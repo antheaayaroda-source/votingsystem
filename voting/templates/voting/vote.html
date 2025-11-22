@@ -53,17 +53,25 @@
       font-weight: 600;
     }
     .topbar .welcome-name { opacity: 0.95; }
-    .topbar a.logout {
-      color: #ffffff;
+    .topbar .logout {
+      color: #ffffff !important;
       text-decoration: none;
-      font-weight: 700;
-      background: rgba(255,255,255,0.12);
-      padding: 6px 10px;
-      border-radius: 8px;
-      transition: background .2s ease, transform .08s ease;
+      font-weight: 700 !important;
+      background: rgba(220, 53, 69, 0.9) !important;
+      padding: 8px 16px !important;
+      border-radius: 8px !important;
+      transition: all .2s ease !important;
+      border: 2px solid rgba(255,255,255,0.3) !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+      cursor: pointer !important;
     }
-    .topbar a.logout:hover { background: rgba(255,255,255,0.2); }
-    .topbar a.logout:active { transform: translateY(1px); }
+    .topbar .logout:hover { 
+      background: rgba(200, 35, 51, 1) !important;
+      border-color: rgba(255,255,255,0.5) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+      transform: translateY(-1px) !important;
+    }
+    .topbar .logout:active { transform: translateY(0px) !important; }
     .logo-wrap {
       animation: floatLogo 3s ease-in-out infinite;
       flex: 0 0 auto;
