@@ -410,6 +410,55 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
         }
+
+        // Remove white background from dashboard logo
+        setTimeout(function() {
+            const dashLogo = document.querySelector('.dashboard-logo');
+            if (dashLogo) {
+                makeLogoTransparent(dashLogo);
+            }
+        }, 100);
     });
+
+    function makeLogoTransparent(img) {
+        const processImage = function() {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                const w = img.naturalWidth || img.width;
+                const h = img.naturalHeight || img.height;
+                
+                if (!w || !h) return;
+                
+                canvas.width = w;
+                canvas.height = h;
+                ctx.drawImage(img, 0, 0, w, h);
+                
+                const imageData = ctx.getImageData(0, 0, w, h);
+                const data = imageData.data;
+                
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i + 1];
+                    const b = data[i + 2];
+                    
+                    if (r > 240 && g > 240 && b > 240) {
+                        data[i + 3] = 0;
+                    }
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+                img.src = canvas.toDataURL('image/png');
+            } catch(e) {
+                console.error('Dashboard logo transparency error:', e);
+            }
+        };
+        
+        if (img.complete && img.naturalWidth > 0) {
+            processImage();
+        } else {
+            img.onload = processImage;
+        }
+    }
 </script>
 {% endblock %}
