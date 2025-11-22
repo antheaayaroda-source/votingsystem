@@ -345,9 +345,8 @@ function confirmLogout() {
 }
 
 // Close modal when clicking outside
-document.addEventListener('click', function(e) {
-    const modal = document.getElementById('logoutModal');
-    if (e.target === modal) {
+document.getElementById('logoutModal').addEventListener('click', function(e) {
+    if (e.target === this) {
         closeLogoutModal();
     }
 });
