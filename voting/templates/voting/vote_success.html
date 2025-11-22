@@ -31,9 +31,9 @@
         <p class="appreciation">We appreciate your participation in the election. Your voice matters!</p>
         
         <div class="success-actions">
-            <form action="{% url 'voting:voter_logout' %}" method="post" style="display:inline;">
+            <form id="logoutForm" action="{% url 'voting:voter_logout' %}" method="post" style="display:inline;">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-logout">
+                <button type="button" onclick="confirmLogout()" class="btn btn-logout">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </form>
@@ -222,4 +222,12 @@
 
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+function confirmLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        document.getElementById('logoutForm').submit();
+    }
+}
+</script>
 {% endblock %}
