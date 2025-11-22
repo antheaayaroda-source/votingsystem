@@ -182,19 +182,9 @@
 {% endblock %}
 
 {% block header %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div class="d-flex align-items-center">
-        <img src="{% static 'voting/images/logo.png' %}" alt="Logo" class="me-3 dashboard-logo">
-        <h1 class="mb-0" style="color: var(--text-on-green);">Admin Dashboard</h1>
-    </div>
-    <div>
-        <form action="{% url 'voting:admin_logout' %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-danger">
-                <i class="fas fa-sign-out-alt me-1"></i> Logout
-            </button>
-        </form>
-    </div>
+<div class="d-flex align-items-center mb-4">
+    <img src="{% static 'voting/images/logo.png' %}" alt="Logo" class="me-3 dashboard-logo">
+    <h1 class="mb-0" style="color: var(--text-on-green);">Admin Dashboard</h1>
 </div>
 {% endblock %}
 
