@@ -33,10 +33,23 @@
         <div class="success-actions">
             <form id="logoutForm" action="{% url 'voting:voter_logout' %}" method="post" style="display:inline;">
                 {% csrf_token %}
-                <button type="button" onclick="confirmLogout()" class="btn btn-logout">
+                <button type="button" onclick="showLogoutModal()" class="btn btn-logout">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="logout-modal-backdrop">
+    <div class="logout-modal">
+        <div class="logout-modal-icon">⚠️</div>
+        <h3>Confirm Logout</h3>
+        <p>Are you sure you want to logout?</p>
+        <div class="logout-modal-actions">
+            <button onclick="closeLogoutModal()" class="modal-btn btn-cancel">Cancel</button>
+            <button onclick="confirmLogout()" class="modal-btn btn-confirm">Yes, Logout</button>
         </div>
     </div>
 </div>
@@ -193,6 +206,92 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
 
+    .logout-modal-backdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .logout-modal {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .logout-modal-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+
+    .logout-modal h3 {
+        color: #333;
+        margin: 0 0 10px 0;
+        font-size: 24px;
+    }
+
+    .logout-modal p {
+        color: #666;
+        margin: 0 0 25px 0;
+        font-size: 16px;
+    }
+
+    .logout-modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .modal-btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel {
+        background: #e0e0e0;
+        color: #333;
+    }
+
+    .btn-cancel:hover {
+        background: #d0d0d0;
+    }
+
+    .btn-confirm {
+        background: var(--green-dark);
+        color: white;
+    }
+
+    .btn-confirm:hover {
+        background: rgba(26,77,46,0.9);
+    }
+
     @media (max-width: 768px) {
         .success-card {
             padding: 25px 20px;
@@ -217,6 +316,15 @@
         .position, .candidate-name {
             font-size: 15px;
         }
+
+        .logout-modal {
+            padding: 25px 20px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
     }
 </style>
 
@@ -224,10 +332,24 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <script>
-function confirmLogout() {
-    if (confirm('Are you sure you want to logout?')) {
-        document.getElementById('logoutForm').submit();
-    }
+function showLogoutModal() {
+    document.getElementById('logoutModal').style.display = 'flex';
 }
+
+function closeLogoutModal() {
+    document.getElementById('logoutModal').style.display = 'none';
+}
+
+function confirmLogout() {
+    document.getElementById('logoutForm').submit();
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('logoutModal');
+    if (e.target === modal) {
+        closeLogoutModal();
+    }
+});
 </script>
 {% endblock %}
