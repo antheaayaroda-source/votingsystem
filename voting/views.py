@@ -778,8 +778,8 @@ def student_auth(request):
             else:
                 request.session.set_expiry(1209600)
 
-            # Check if user is staff/admin
-            if user.is_staff:
+            # Check if user is staff/admin or superuser
+            if user.is_staff or user.is_superuser:
                 # Redirect to the admin dashboard using URL name
                 return redirect('voting:admin_dashboard')  # This now points to /dashboard/
 
