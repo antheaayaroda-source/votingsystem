@@ -1,0 +1,392 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Registration - Voting System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #4a9d5e;
+      --green-dark: #1a4d2e;
+      --text-on-green: #ffffff;
+      --panel-bg: rgba(255,255,255,0.04);
+    }
+    
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #4a9d5e, #1a4d2e) !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    
+    .container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      position: relative;
+      overflow-y: auto;
+      max-height: 90vh;
+    }
+    
+    .logo {
+      width: 180px;
+      height: auto;
+      margin: 0 auto 15px;
+      display: block;
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+    
+    h2 {
+      color: #2c3e50;
+      margin: 0 0 20px 0;
+      font-size: 26px;
+      font-weight: 700;
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+    
+    .form-group small {
+      display: block;
+      color: #666;
+      font-size: 11px;
+      margin-top: 3px;
+      font-style: italic;
+    }
+    
+    form input,
+    form select {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 3px;
+      border-radius: 8px;
+      border: 2px solid #e1e8ed;
+      outline: none;
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    form input:focus,
+    form select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(74,157,94,0.12);
+    }
+    
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #4a9d5e, #1a4d2e);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+    
+    button:hover {
+      filter: brightness(1.05);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+    }
+    
+    button:active {
+      transform: translateY(1px) scale(0.995);
+    }
+    
+    .login-link {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #555;
+      text-align: center;
+    }
+    
+    .login-link a {
+      color: var(--green-dark);
+      text-decoration: none;
+      font-weight: 600;
+      position: relative;
+      display: inline-block;
+      transition: transform .12s ease, color .2s ease;
+    }
+    
+    .login-link a:hover {
+      transform: translateY(-1px);
+    }
+    
+    .login-link a:active {
+      transform: translateY(1px) scale(0.99);
+    }
+    
+    .errorlist {
+      color: #e74c3c;
+      font-size: 12px;
+      margin: 3px 0 0;
+      padding: 0;
+      list-style: none;
+      text-align: left;
+    }
+    
+    .form-group {
+      margin-bottom: 18px;
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 18px;
+      }
+      
+      h2 {
+        font-size: 22px;
+      }
+      
+      .logo {
+        width: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 15px;">
+      <img src="{% static 'voting/images/logo.png' %}" alt="School Logo" class="logo">
+      <h2>Student Registration</h2>
+      
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+          {% if message.tags == 'error' %}
+            <i class="fas fa-exclamation-circle"></i>
+          {% elif message.tags == 'success' %}
+            <i class="fas fa-check-circle"></i>
+          {% elif message.tags == 'info' %}
+            <i class="fas fa-info-circle"></i>
+          {% endif %}
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    
+    {% if form.errors %}
+      <div class="error-message" style="color: #e74c3c; margin-bottom: 20px; font-size: 14px; background: #ffebee; padding: 10px; border-radius: 6px; border-left: 4px solid #e74c3c;">
+        <strong>Please correct the following:</strong>
+        <ul style="margin: 5px 0 0 15px; padding: 0;">
+          {% for field in form %}
+            {% for error in field.errors %}
+              <li>{{ field.label }}: {{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'voting:register' %}" id="registrationForm" onsubmit="return validateRegistrationForm()">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label for="id_username">Student ID Number</label>
+        {{ form.username }}
+        <small class="form-text text-muted">This will be your username for login</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="id_email">Email Address</label>
+        {{ form.email }}
+      </div>
+      
+      <div class="form-group">
+        <label for="id_first_name">First Name</label>
+        {{ form.first_name }}
+      </div>
+      
+      <div class="form-group">
+        <label for="id_middle_name">Middle Name (Optional)</label>
+        {{ form.middle_name }}
+      </div>
+      
+      <div class="form-group">
+        <label for="id_last_name">Last Name</label>
+        {{ form.last_name }}
+      </div>
+      
+      <div class="form-group">
+        <label for="id_grade_level">Grade Level</label>
+        {{ form.grade_level }}
+      </div>
+      
+      <div class="form-group">
+        <label for="id_strand">Strand (SHS only)</label>
+        {{ form.strand }}
+      </div>
+      
+      <div class="form-group">
+        <label for="id_password1">Password</label>
+        {{ form.password1 }}
+      </div>
+      
+      <div class="form-group">
+        <label for="id_password2">Confirm Password</label>
+        {{ form.password2 }}
+      </div>
+      
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; margin-top: 15px;">
+        <i class="fas fa-user-plus"></i> Register
+      </button>
+      <div class="login-link" style="margin-top: 20px; text-align: center;">
+        Already have an account? <a href="{% url 'voting:voter_login' %}">Login here</a>
+      </div>
+    </form>
+  </div>
+  
+  <script>
+    function validateRegistrationForm() {
+      const requiredFields = [
+        'id_username', 'id_first_name', 'id_last_name', 'id_email', 
+        'id_password1', 'id_password2', 'id_grade_level'
+      ];
+      
+      let isValid = true;
+      strandSelect.disabled = true;
+      
+      // Handle grade level change
+      function handleGradeChange() {
+        const selectedGrade = parseInt(this.value);
+        // Enable strand select only for SHS (grades 11-12)
+        strandSelect.disabled = (selectedGrade < 11 || selectedGrade > 12);
+        
+        // If not SHS, clear the strand selection
+        if (strandSelect.disabled) {
+          strandSelect.value = '';
+        }
+      }
+      
+      // Form submission handler
+      function handleSubmit(e) {
+        // Show loading state
+        btnText.style.display = 'none';
+        btnLoader.style.display = 'inline-block';
+        submitBtn.disabled = true;
+        
+        // If form is invalid, prevent submission and show errors
+        if (!form.checkValidity()) {
+          e.preventDefault();
+          btnText.style.display = 'inline';
+          btnLoader.style.display = 'none';
+          submitBtn.disabled = false;
+        }
+      }
+      
+      // Add event listeners
+      gradeSelect.addEventListener('change', handleGradeChange);
+      form.addEventListener('submit', handleSubmit);
+      
+      // Add input validation feedback
+      const inputs = form.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        input.addEventListener('input', function() {
+          if (this.checkValidity()) {
+            this.classList.remove('invalid');
+          } else {
+            this.classList.add('invalid');
+          }
+        });
+      });
+    });
+  </script>
+  
+  <style>
+    /* Add some additional styles for better form interaction */
+    input.invalid, select.invalid {
+      border-color: #e74c3c !important;
+      background-color: #fff9f9;
+    }
+    
+    .btn-register {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-text {
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: none;
+    }
+    
+    .btn-register.loading .btn-text {
+      visibility: hidden;
+    }
+    
+    .btn-register.loading .btn-loader {
+      display: block;
+    }
+    
+    /* Add some nice focus styles */
+    input:focus, select:focus {
+      outline: none;
+    }
+    
+    button {
+      width: 100%;
+      padding: 14px;
+      background: var(--green-dark);
+      color: var(--text-on-green);
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+  </style>
+</body>
+</html>

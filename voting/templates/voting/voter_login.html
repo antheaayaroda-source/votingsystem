@@ -1,0 +1,394 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Voter Login - Voting System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --green: #4a9d5e;
+            --green-dark: #1a4d2e;
+            --text-on-green: #ffffff;
+        }
+        
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #4a9d5e, #1a4d2e) !important;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: #4a9d5e;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background: var(--green-dark);
+            color: var(--text-on-green);
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 15px;
+            animation: floatLogo 3s ease-in-out infinite;
+        }
+        
+        .login-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .login-form {
+            padding: 30px;
+            background: #4a9d5e;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #fff;
+            font-weight: 500;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            height: 48px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--green-dark);
+            box-shadow: 0 0 0 3px rgba(26,77,46,0.12);
+            outline: none;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            cursor: pointer;
+            z-index: 2;
+        }
+        
+        .forgot-password {
+            display: block;
+            text-align: right;
+            font-size: 12px;
+            color: var(--green-dark);
+            text-decoration: none;
+            margin-top: 5px;
+            transition: color 0.2s;
+        }
+
+        .forgot-password:hover {
+            color: var(--green);
+            text-decoration: underline;
+        }
+        
+        .btn-login {
+            background: #1a4d2e;
+            color: var(--text-on-green);
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background: #0f3620;
+            transform: translateY(-2px);
+        }
+        
+        .btn-login:active {
+            transform: translateY(0);
+        }
+        
+        .btn-about {
+            background: #ff8c00;
+            margin-top: 0;
+        }
+
+        .btn-about:hover {
+            background: #e67e00;
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #fff;
+        }
+        
+        .register-link a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .register-link a:hover {
+            color: #e0e0e0;
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                border-radius: 10px;
+            }
+            
+            .login-header {
+                padding: 20px 15px;
+            }
+            
+            .login-form {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <img src="{% static 'voting/images/logo.png' %}" alt="School Logo" class="logo">
+            <h1>Student Voter Portal</h1>
+            <p>Sign in to cast your vote</p>
+        </div>
+        
+        <div class="login-form">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" style="color: #e74c3c; margin-bottom: 20px; font-size: 14px; text-align: center; background: #fde8e8; padding: 10px; border-radius: 6px; border-left: 4px solid #e74c3c;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <form id="voterLoginForm" method="post" action="{% url 'voting:voter_login' %}">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="student_id">Student ID</label>
+                    <i class="fas fa-user input-icon"></i>
+                    <input 
+                        type="text" 
+                        id="student_id" 
+                        name="student_id" 
+                        class="form-control" 
+                        placeholder="Enter your student ID" 
+                        required
+                        autocomplete="username"
+                    >
+                    <div id="studentIdError" class="error-message"></div>
+                </div>
+                
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label for="password">Password</label>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                    <i class="fas fa-lock input-icon"></i>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-control" 
+                        placeholder="Enter your password" 
+                        required
+                        autocomplete="current-password"
+                    >
+                    <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                    <div id="passwordError" class="error-message"></div>
+                </div>
+                
+                <div class="form-group" style="display: flex; align-items: center; margin-top: 20px;">
+                    <input type="checkbox" id="remember_me" name="remember_me" style="width: auto; margin-right: 10px;">
+                    <label for="remember_me" style="margin: 0; font-size: 13px; color: #555; cursor: pointer;">
+                        Keep me signed in
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn-login" id="loginButton">
+                    <span id="buttonText">Sign In to Vote</span>
+                    <div id="buttonLoader" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i> Signing in...
+                    </div>
+                </button>
+                
+                <div class="register-link">
+                    Don't have a voter account? <a href="{% url 'voting:register' %}">Register here</a>
+                    <div style="margin-top: 10px; font-size: 12px;"><a href="#" onclick="showAbout();return false;" style="color: #fff; text-decoration: underline;">About</a></div>
+                </div>
+            </form>
+            <div style="text-align: center; margin-top: 15px;">
+                <button type="button" class="btn-login btn-about" onclick="document.getElementById('aboutModal').style.display='flex';">About</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="aboutModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000;">
+        <div style="background: #1a4d2e; border-radius: 14px; width: min(520px, 92vw); color: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.4); overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #4a9d5e, #1a4d2e); padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 18px; font-weight: 800;">About Voting System</h3>
+                <button type="button" onclick="document.getElementById('aboutModal').style.display='none';" style="background: transparent; border: none; color: #fff; font-size: 20px; cursor: pointer;">×</button>
+            </div>
+            <div style="padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div style="text-align: center;">
+                    <img src="{% static 'images/poster.jpeg' %}" alt="Voting Poster" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                </div>
+                <div style="text-align: center;">
+                    <img src="{% static 'images/logo.png' %}" alt="Logo" style="max-width: 100%; height: auto;">
+                </div>
+            </div>
+            <div style="padding: 0 20px 20px 20px;">
+                <label style="color: #ff8c00; font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 8px;">Description:</label>
+                <div id="aboutDescription" style="width: 100%; min-height: 100px; padding: 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: #ffffff; font-size: 0.85rem; white-space: pre-wrap; overflow-y: auto;"></div>
+            </div>
+            <div style="padding: 0 20px 20px 20px; text-align: center;">
+                <button type="button" onclick="document.getElementById('aboutModal').style.display='none';" style="background: #666; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        
+        togglePassword.addEventListener('click', function (e) {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+        
+        document.getElementById('voterLoginForm').addEventListener('submit', function(e) {
+            let isValid = true;
+            const studentId = document.getElementById('student_id').value.trim();
+            const password = document.getElementById('password').value;
+            const studentIdError = document.getElementById('studentIdError');
+            const passwordError = document.getElementById('passwordError');
+            const buttonText = document.getElementById('buttonText');
+            const buttonLoader = document.getElementById('buttonLoader');
+            
+            studentIdError.style.display = 'none';
+            passwordError.style.display = 'none';
+            
+            if (!studentId) {
+                studentIdError.textContent = 'Please enter your student ID';
+                studentIdError.style.display = 'block';
+                isValid = false;
+            } else if (!/^\d+$/.test(studentId)) {
+                studentIdError.textContent = 'Student ID must contain numbers only';
+                studentIdError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!password) {
+                passwordError.textContent = 'Please enter your password';
+                passwordError.style.display = 'block';
+                isValid = false;
+            } else if (password.length < 6) {
+                passwordError.textContent = 'Password must be at least 6 characters long';
+                passwordError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                buttonText.style.display = 'none';
+                buttonLoader.style.display = 'block';
+                document.getElementById('loginButton').disabled = true;
+            } else {
+                e.preventDefault();
+            }
+        });
+        
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                document.getElementById('loginButton').disabled = false;
+                document.getElementById('buttonText').style.display = 'block';
+                document.getElementById('buttonLoader').style.display = 'none';
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const saved = localStorage.getItem('posterDesc');
+            if (saved) {
+                document.getElementById('aboutDescription').textContent = saved;
+            }
+        });
+
+        document.getElementById('aboutModal').addEventListener('click', function(e) {
+            if (e.target === this) this.style.display = 'none';
+        });
+    </script>
+    <script>
+      function showAbout() {
+        document.getElementById('aboutModal').style.display = 'flex';
+      }
+    </script>
+</body>
+</html>

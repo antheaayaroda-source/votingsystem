@@ -1,0 +1,188 @@
+{% extends 'voting/admin/base.html' %}
+{% load static %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Party - {{ block.super }}{% endblock %}
+
+{% block header_buttons %}
+    <a href="{% url 'voting:admin_parties' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Parties
+    </a>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        {% if form.instance.pk %}
+                            <i class="bi bi-pencil-square"></i> Edit Party: {{ form.instance.name }}
+                        {% else %}
+                            <i class="bi bi-plus-circle"></i> Add New Party
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" id="partyForm">
+                        {% csrf_token %}
+                        
+                        <!-- Party Information -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Party Information</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="{{ form.name.id_for_label }}" class="form-label">
+                                                Party Name <span class="text-danger">*</span>
+                                            </label>
+                                            {{ form.name }}
+                                            {% if form.name.errors %}
+                                                <div class="text-danger">{{ form.name.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Candidates Section -->
+                        <div class="row">
+                            <!-- President -->
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0">President</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="new_president" class="form-label">Candidate Name</label>
+                                            <input type="text" name="new_president" id="new_president" 
+                                                   class="form-control mb-2" 
+                                                   value="{{ form.new_president.value|default:'' }}"
+                                                   placeholder="Enter president's name">
+                                            {% if form.new_president.errors %}
+                                                <div class="text-danger">{{ form.new_president.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="president_photo" class="form-label">Photo (Optional)</label>
+                                            <input type="file" name="president_photo" id="president_photo" 
+                                                   class="form-control">
+                                            {% if form.president_photo.errors %}
+                                                <div class="text-danger">{{ form.president_photo.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Vice President -->
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0">Vice President</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="new_vice_president" class="form-label">Candidate Name</label>
+                                            <input type="text" name="new_vice_president" id="new_vice_president" 
+                                                   class="form-control mb-2" 
+                                                   value="{{ form.new_vice_president.value|default:'' }}"
+                                                   placeholder="Enter vice president's name">
+                                            {% if form.new_vice_president.errors %}
+                                                <div class="text-danger">{{ form.new_vice_president.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="vice_president_photo" class="form-label">Photo (Optional)</label>
+                                            <input type="file" name="vice_president_photo" id="vice_president_photo" 
+                                                   class="form-control">
+                                            {% if form.vice_president_photo.errors %}
+                                                <div class="text-danger">{{ form.vice_president_photo.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Secretary -->
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0">Secretary</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="new_secretary" class="form-label">Candidate Name</label>
+                                            <input type="text" name="new_secretary" id="new_secretary" 
+                                                   class="form-control mb-2" 
+                                                   value="{{ form.new_secretary.value|default:'' }}"
+                                                   placeholder="Enter secretary's name">
+                                            {% if form.new_secretary.errors %}
+                                                <div class="text-danger">{{ form.new_secretary.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="secretary_photo" class="form-label">Photo (Optional)</label>
+                                            <input type="file" name="secretary_photo" id="secretary_photo" 
+                                                   class="form-control">
+                                            {% if form.secretary_photo.errors %}
+                                                <div class="text-danger">{{ form.secretary_photo.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'voting:admin_parties' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> {% if form.instance.pk %}Update{% else %}Create{% endif %} Party
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('partyForm');
+        
+        form.addEventListener('submit', function(e) {
+            const partyName = document.getElementById('{{ form.name.id_for_label }}').value.trim();
+            
+            if (!partyName) {
+                e.preventDefault();
+                alert('Please enter a party name');
+                return false;
+            }
+            
+            // Check if at least one candidate is provided
+            const president = document.getElementById('new_president').value.trim();
+            const vicePresident = document.getElementById('new_vice_president').value.trim();
+            const secretary = document.getElementById('new_secretary').value.trim();
+            
+            if (!president && !vicePresident && !secretary) {
+                e.preventDefault();
+                alert('Please add at least one candidate');
+                return false;
+            }
+            
+            return true;
+        });
+    });
+</script>
+{% endblock %}

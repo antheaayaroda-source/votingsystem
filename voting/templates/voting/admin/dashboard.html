@@ -1,0 +1,425 @@
+
+{% extends 'voting/admin/base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--green);
+        color: var(--text-on-green);
+    }
+    
+    .stat-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        background-color: rgba(26, 77, 46, 0.9);
+        border-left: 4px solid var(--green);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+        border-left: 4px solid var(--accent);
+    }
+    
+    .stat-icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+
+    /* Override any utility classes that force white backgrounds */
+    .stat-card.bg-white {
+        background-color: rgba(26, 77, 46, 0.9) !important;
+        color: var(--text-on-green);
+    }
+
+    /* Make cards and tables blend with green background */
+    .card, .table, .table thead th, .table tbody td {
+        background: transparent;
+        color: var(--text-on-green);
+        border-color: var(--panel-border);
+    }
+
+    /* Dashboard logo sizing & responsiveness */
+    /* Logo with only animation and no surrounding box */
+    .dashboard-logo {
+        height: 96px; /* clear and prominent */
+        width: auto;
+        max-height: 160px;
+        transition: transform 0.18s ease;
+        display: block;
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        animation: floatLogo 3s ease-in-out infinite;
+    }
+
+    .dashboard-logo:hover {
+        transform: translateY(-3px) scale(1.01);
+    }
+
+    @keyframes floatLogo {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+        100% { transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-logo { height: 72px; max-height: 96px; }
+    }
+
+    
+    .recent-activity {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .recent-activity li {
+        padding: 10px 0;
+        border-bottom: 1px solid var(--panel-border);
+    }
+    
+    .recent-activity li:last-child {
+        border-bottom: none;
+    }
+    
+    .module {
+        background-color: rgba(26, 77, 46, 0.9);
+        color: var(--text-on-green);
+        border-radius: 8px;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        margin-bottom: 20px;
+        overflow: hidden;
+        border: 1px solid var(--panel-border);
+    }
+    
+    .module-header {
+        background: linear-gradient(135deg, var(--green), var(--green-dark));
+        color: var(--text-on-green);
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        border-bottom: 2px solid var(--accent);
+    }
+    
+    .module-body {
+        padding: 20px;
+        color: var(--text-on-green);
+    }
+    
+    .action-button {
+        display: inline-block;
+        padding: 8px 15px;
+        margin: 5px;
+        border-radius: 5px;
+        text-decoration: none;
+        color: white;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .action-button.view {
+        background-color: var(--green);
+    }
+    
+    .action-button.add {
+        background-color: var(--green);
+    }
+    
+    .action-button.change {
+        background-color: var(--accent);
+    }
+    
+    .action-button.delete {
+        background-color: #dc3545;
+    }
+    
+    .dashboard-section {
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 25px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 2px solid transparent;
+        background-color: rgba(26, 77, 46, 0.9);
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.06);
+    }
+    
+    .dashboard-section:active,
+    .dashboard-section:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 0.25rem rgba(255, 140, 0, 0.15);
+    }
+    
+    .dashboard-section.active {
+        border-color: var(--accent);
+        background-color: rgba(255, 255, 255, 0.10);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12);
+    }
+    
+    .dashboard-section h3 {
+        color: var(--text-on-green);
+        border-bottom: 2px solid var(--accent);
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .action-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        color: green gradient;
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center">
+        <img src="{% static 'voting/images/logo.png' %}" alt="Logo" class="me-3 dashboard-logo">
+        <h1 class="mb-0" style="color: var(--text-on-green);">Admin Dashboard</h1>
+    </div>
+    <div>
+        <form action="{% url 'voting:admin_logout' %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">
+                <i class="fas fa-sign-out-alt me-1"></i> Logout
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Stats Cards -->
+    <div class="dashboard-section stats-section">
+        <h3 class="section-header"><i class="fas fa-chart-pie me-2"></i>Statistics Overview</h3>
+        <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="stat-card bg-white p-4" data-url="{% url 'voting:admin_voters' %}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1" style="color: #ffffff !important;">Total Voters</h6>
+                        <h2 class="mb-0" id="stat-total-voters" style="color: #ffffff;">{{ total_voters }}</h2>
+                    </div>
+                    <div class="stat-icon" style="color: var(--green);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{% url 'voting:admin_voters' %}" class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation();">View All</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="stat-card bg-white p-4" data-url="{% url 'voting:admin_votes' %}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1" style="color: #ffffff !important;">Total Votes</h6>
+                        <h2 class="mb-0" id="stat-total-votes" style="color: #ffffff;">{{ total_votes }}</h2>
+                    </div>
+                    <div class="stat-icon" style="color: var(--green);">
+                        <i class="fas fa-vote-yea"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{% url 'voting:admin_votes' %}" class="btn btn-sm btn-outline-success" onclick="event.stopPropagation();">View All</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="stat-card bg-white p-4" data-url="{% url 'voting:admin_candidates' %}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1" style="color: #ffffff !important;">Candidates</h6>
+                        <h2 class="mb-0" id="stat-total-candidates" style="color: #ffffff;">{{ total_candidates }}</h2>
+                    </div>
+                    <div class="stat-icon" style="color: var(--green);">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{% url 'voting:admin_candidates' %}" class="btn btn-sm btn-outline-info" onclick="event.stopPropagation();">View All</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="stat-card bg-white p-4" data-url="{% url 'voting:admin_parties' %}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1" style="color: #ffffff !important;">Political Parties</h6>
+                        <h2 class="mb-0" id="stat-total-parties" style="color: #ffffff;">{{ total_parties }}</h2>
+                    </div>
+                    <div class="stat-icon text-warning">
+                        <i class="fas fa-flag"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{% url 'voting:admin_parties' %}" class="btn btn-sm btn-outline-warning" onclick="event.stopPropagation();">View All</a>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity removed per request -->
+    
+    <!-- System Status -->
+    <div class="dashboard-section status-section">
+        <h3 class="section-header"><i class="fas fa-server me-2"></i>System Status</h3>
+        <div class="row">
+        <div class="col-12">
+            <div class="module">
+                <div class="module-header">
+                    <i class="fas fa-server me-2"></i> System Status
+                </div>
+                <div class="module-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Voting Status</h5>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="votingStatus" {% if voting_enabled %}checked{% endif %}>
+                                <label class="form-check-label" for="votingStatus">
+                                    {% if voting_enabled %}
+                                    <span class="badge bg-success">Voting is Active</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Voting is Paused</span>
+                                    {% endif %}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>System Information</h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-calendar-day me-2"></i> Current Date: {% now "F j, Y" %}</li>
+                                <li><i class="fas fa-clock me-2"></i> Current Time: {% now "g:i A" %}</li>
+                                <li><i class="fas fa-users me-2"></i> Active Users: <span id="stat-active-users">{{ active_users_count }}</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    
+    <!-- Positions Overview and Recent Votes removed per request -->
+
+    <!-- Quick Actions removed per request -->
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    // Fetch dashboard stats and update DOM
+    async function fetchDashboardStats() {
+        try {
+            const resp = await fetch('{% url "voting:admin_dashboard_stats" %}');
+            if (!resp.ok) return;
+            const j = await resp.json();
+            document.getElementById('stat-total-voters').textContent = j.total_voters;
+            document.getElementById('stat-total-votes').textContent = j.total_votes;
+            document.getElementById('stat-total-candidates').textContent = j.total_candidates;
+            document.getElementById('stat-total-parties').textContent = j.total_parties;
+            document.getElementById('stat-active-users').textContent = j.active_users_count;
+        } catch (e) {
+            console.warn('Failed to fetch dashboard stats', e);
+        }
+    }
+
+    // Periodically refresh stats
+    document.addEventListener('DOMContentLoaded', function() {
+        // initial fetch
+        fetchDashboardStats();
+        // refresh every 15 seconds
+        setInterval(fetchDashboardStats, 15000);
+    });
+
+// Add click handler for dashboard sections
+document.addEventListener('DOMContentLoaded', function() {
+    const sections = document.querySelectorAll('.dashboard-section');
+    
+    sections.forEach(section => {
+        section.addEventListener('click', function(e) {
+            // If the click originated inside a stat-card, ignore here
+            if (e.target && e.target.closest && e.target.closest('.stat-card')) {
+                return;
+            }
+            // Remove active class from all sections
+            sections.forEach(s => s.classList.remove('active'));
+            // Add active class to clicked section
+            this.classList.add('active');
+        });
+    });
+});
+// Make stat-cards clickable and navigate to their data-url while avoiding including other sections
+document.addEventListener('DOMContentLoaded', function() {
+    const statCards = document.querySelectorAll('.stat-card[data-url]');
+    // Navigation guard to prevent double navigation
+    if (!window.__dashboardNavBusy) {
+        window.__dashboardNavBusy = false;
+    }
+
+    statCards.forEach(card => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', function(e) {
+            // If the click originated from an inner link or button, don't intercept
+            if (e.target && (e.target.tagName === 'A' || e.target.closest('a') || e.target.closest('button'))) {
+                return;
+            }
+            // Prevent other handlers from running and stop default navigation
+            try { e.stopImmediatePropagation(); } catch (err) {}
+            e.stopPropagation();
+            e.preventDefault();
+
+            const url = this.getAttribute('data-url');
+            if (url && !window.__dashboardNavBusy) {
+                window.__dashboardNavBusy = true;
+                // Use assign to preserve history behavior
+                window.location.assign(url);
+            }
+        }, { passive: false, capture: true });
+    });
+});
+    // Toggle voting status
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleVotingBtn = document.getElementById('toggleVotingBtn');
+        const votingStatus = document.getElementById('votingStatus');
+        
+        if (toggleVotingBtn && votingStatus) {
+            toggleVotingBtn.addEventListener('click', function() {
+                fetch('{% url "voting:toggle_voting" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFTTOKEN': '{{ csrf_token }}',
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'action=' + (votingStatus.textContent.trim().toLowerCase() === 'active' ? 'stop' : 'start')
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        votingStatus.textContent = data.voting_active ? 'Active' : 'Inactive';
+                        votingStatus.className = 'badge ' + (data.voting_active ? 'bg-success' : 'bg-danger');
+                        toggleVotingBtn.textContent = data.voting_active ? 'Stop Voting' : 'Start Voting';
+                        toggleVotingBtn.className = 'btn ' + (data.voting_active ? 'btn-danger' : 'btn-success');
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

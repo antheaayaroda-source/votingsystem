@@ -1,0 +1,175 @@
+{% extends 'voting/admin/base.html' %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--green);
+        color: var(--text-on-green);
+    }
+    .container {
+        max-width: 900px;
+        padding: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card border-0 shadow-lg">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0 text-center">Election Rules and Guidelines</h3>
+        </div>
+        <div class="card-body p-0">
+            <!-- TEAM GALING -->
+            <div class="team-rules mb-5">
+                <div class="text-center mb-3">
+                    <h3 class="fw-bold mb-1" style="font-size: 1.5rem;">✨TEAM GALING✨</h3>
+                    <p class="text-muted mb-0" style="font-size: 0.9rem;">"Excellence in Action, Leadership with Integrity"</p>
+                </div>
+                
+                <div class="rules-section">
+                    <h5 class="rule-title fw-bold mb-2" style="font-size: 1.1rem;">EXCELLENCE FIRST</h5>
+                    <ul class="rule-list">
+                        <li>Every member must give their best in both academics and leadership to inspire others.</li>
+                    </ul>
+                    
+                    <h5 class="rule-title fw-bold mb-2" style="font-size: 1.1rem;">INTEGRITY AND HONESTY</h5>
+                    <ul class="rule-list">
+                        <li>Never spread rumors or fake information about other candidates.</li>
+                        <li>Always be truthful in all campaign materials.</li>
+                    </ul>
+                    
+                    <h5 class="rule-title fw-bold mb-2" style="font-size: 1.1rem;">RESPECT AND FAIRNESS</h5>
+                    <ul class="rule-list">
+                        <li>Respect everyone's opinion, even those who support the other team.</li>
+                        <li>Treat all students equally — no favoritism.</li>
+                    </ul>
+                    
+                    <h5 class="rule-title fw-bold mb-2" style="font-size: 1.1rem;">LEAD BY EXAMPLE</h5>
+                    <ul class="rule-list">
+                        <li>Be punctual, responsible, and kind so that others can see your leadership through your actions.</li>
+                    </ul>
+                    
+                    <h4 class="rule-title">VISION FOR ALL</h4>
+                    <ul class="rule-list">
+                        <li>Focus your campaign on how your plans will benefit the entire student body, not just your friends or class.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <!-- TEAM SIGLA -->
+            <div class="team-rules mb-5" style="margin-top: -20px;">
+                <div class="text-center mb-3">
+                    <h3 class="fw-bold mb-1" style="font-size: 1.5rem;">✨TEAM SIGLA✨</h3>
+                    <p class="text-muted mb-0" style="font-size: 0.9rem;">"Energy, Unity, and Action!"</p>
+                </div>
+                
+                <div class="rules-section">
+                    <h5 class="rule-title fw-bold mb-2" style="font-size: 1.1rem;">BE A ROLE MODEL</h5>
+                    <ul class="rule-list">
+                        <li>Every member must show positivity, discipline, and teamwork at all times.</li>
+                    </ul>
+                    
+                    <h5 class="rule-title fw-bold mb-2" style="font-size: 1.1rem;">CAMPAIGN WITH ENERGY AND RESPECT</h5>
+                    <ul class="rule-list">
+                        <li>Always promote the team's goals in a cheerful and respectful way.</li>
+                        <li>No negative words or insults toward other candidates.</li>
+                    </ul>
+                    
+                    <h5 class="rule-title fw-bold mb-2" style="font-size: 1.1rem;">PROMOTE SCHOOL SPIRIT</h5>
+                    <ul class="rule-list">
+                        <li>Encourage classmates to join school activities and promote unity through small acts of kindness.</li>
+                    </ul>
+                    
+                    <h5 class="rule-title fw-bold mb-2" style="font-size: 1.1rem;">CREATIVE AND HONEST CAMPAIGN</h5>
+                    <ul class="rule-list">
+                        <li>Use creative posters, videos, and slogans that reflect the team's true mission.</li>
+                        <li>Be honest about what you can do - never make false promises.</li>
+                    </ul>
+                    
+                    <h5 class="rule-title fw-bold mb-2" style="font-size: 1.1rem;">SERVE BEFORE YOU LEAD</h5>
+                    <ul class="rule-list">
+                        <li>Show leadership through service. Help others first, even before asking for votes.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <style>
+                .rules-section {
+                    background-color: rgba(255, 255, 255, 0.08);
+                    border-radius: 8px;
+                    padding: 12px 18px;
+                    margin-bottom: 1.2rem;
+                    margin: 15px 0;
+                    border-left: 4px solid var(--green);
+                }
+                .card-header {
+                    background: linear-gradient(135deg, var(--green), var(--green-dark)) !important;
+                    border: none;
+                    padding: 15px 20px;
+                }
+                .card-header h3 {
+                    font-size: 1.8rem;
+                    font-weight: 700;
+                    margin: 0;
+                    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+                }
+                .team-rules {
+                    margin-bottom: 3rem;
+                    padding: 0 15px;
+                }
+                .team-rules h2 {
+                    font-size: 2rem;
+                    margin-bottom: 0.5rem;
+                    color: var(--text-on-green);
+                    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+                }
+                .team-rules h4 {
+                    font-size: 1.2rem;
+                    margin-bottom: 1.5rem;
+                    color: rgba(165,214,167,0.95) !important;
+                    font-style: italic;
+                }
+                .rule-title {
+                    color: var(--accent);
+                    margin-top: 10px;
+                    margin-bottom: 8px;
+                    font-size: 1.2rem;
+                    font-weight: 700;
+                    border-bottom: 2px solid var(--green);
+                    padding-bottom: 0.3rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                .rule-list {
+                    padding-left: 20px;
+                    margin-bottom: 12px;
+                    font-size: 0.95rem;
+                    line-height: 1.5;
+                }
+                .rule-list li {
+                    margin-bottom: 6px;
+                    font-size: 1rem;
+                    line-height: 1.6;
+                    color: rgba(224,224,224,0.95);
+                }
+                .text-muted {
+                    font-size: 1rem;
+                    color: rgba(165,214,167,0.95) !important;
+                }
+                hr {
+                    margin: 2rem 0;
+                    border-color: rgba(255, 255, 255, 0.1);
+                }
+                .card {
+                    background-color: rgba(26, 77, 46, 0.9);
+                    border: none;
+                    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.3);
+                }
+            </style>
+        </div>
+    </div>
+</div>
+{% endblock %}

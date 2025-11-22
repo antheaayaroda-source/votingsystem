@@ -1,0 +1,37 @@
+{% extends "admin/change_list.html" %}
+
+  {% block content %}
+  <div class="module" style="margin-bottom:16px;">
+    <h2>Votes per Candidate</h2>
+    <div class="results">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Candidate</th>
+            <th scope="col">Position</th>
+            <th scope="col" style="text-align:right;">Total Votes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in candidate_totals %}
+          <tr>
+            <th>{{ c.candidate__name }}</th>
+            <td>{{ c.candidate__position__name }}</td>
+            <td style="text-align:right;">{{ c.total }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3" style="text-align:center; color:#555;">No votes yet.</td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <th style="border-top:1px solid #ddd;">Overall</th>
+            <td style="border-top:1px solid #ddd;"></td>
+            <td style="text-align:right;border-top:1px solid #ddd;">{{ overall_votes|default:0 }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {{ block.super }}
+  {% endblock %}

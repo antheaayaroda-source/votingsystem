@@ -1,0 +1,108 @@
+{% extends 'voting/admin/base.html' %}
+{% load static %}
+
+{% block title %}Add New Candidate - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Add New Candidate</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'voting:admin_dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'voting:admin_candidates' %}">Candidates</a></li>
+        <li class="breadcrumb-item active">Add New</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-user-plus me-1"></i>
+            Candidate Information
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {% if messages %}
+                <div class="mb-3">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="first_name" class="form-label">First Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="last_name" class="form-label">Last Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="position" class="form-label">Position <span class="text-danger">*</span></label>
+                            <select class="form-select" id="position" name="position" required>
+                                <option value="" selected disabled>Select Position</option>
+                                {% for position in positions %}
+                                    <option value="{{ position.id }}">{{ position.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="party" class="form-label">Party <span class="text-danger">*</span></label>
+                            <select class="form-select" id="party" name="party" required>
+                                <option value="" selected disabled>Select Party</option>
+                                {% for party in parties %}
+                                    <option value="{{ party.id }}">{{ party.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="photo" class="form-label">Photo (Optional)</label>
+                    <input class="form-control" type="file" id="photo" name="photo" accept="image/*">
+                    <div class="form-text">Upload a square image for best results. Max size: 5MB.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="bio" class="form-label">Biography (Optional)</label>
+                    <textarea class="form-control" id="bio" name="bio" rows="4"></textarea>
+                    <div class="form-text">A short biography or description of the candidate.</div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'voting:admin_candidates' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Candidates
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Save Candidate
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add any additional JavaScript here if needed
+    document.addEventListener('DOMContentLoaded', function() {
+        // Example: Client-side validation or dynamic form behavior
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+  <div class="confirmation-card">
+    <div class="header">
+      <img class="logo" src="{% static 'voting/images/logo.png' %}" alt="School Logo">
+      <h2>Review Your Votes</h2>
+      <p class="subtitle">Please confirm your selections before submitting your vote.</p>
+    </div>
+
+    <div class="votes-summary">
+      <h3>Your Selected Candidates:</h3>
+      <div class="selected-candidates">
+        {% for position, candidate in positions_with_candidates.items %}
+        <div class="candidate-selection">
+          <span class="position">{{ position }}:</span>
+          <span class="candidate-name">{{ candidate.name }}</span>
+          {% if candidate.party %}
+            <span class="party">({{ candidate.party.name }})</span>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="confirmation-actions">
+      <form method="post" action="{% url 'voting:submit_vote' %}" style="display: inline;">
+        {% csrf_token %}
+        {% for position_id, candidate_id in selections.items %}
+          <input type="hidden" name="{{ position_id }}" value="{{ candidate_id }}">
+        {% endfor %}
+        <button type="submit" class="btn btn-confirm">
+          <i class="fas fa-check"></i> Confirm & Submit Votes
+        </button>
+      </form>
+      <a href="{% url 'voting:vote_page' %}" class="btn btn-edit">
+        <i class="fas fa-edit"></i> Edit Selections
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  body {
+    background: linear-gradient(180deg, var(--green-soft), rgba(0,0,0,0));
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .confirmation-card {
+    background: var(--panel-bg);
+    color: var(--panel-text);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 15px;
+    animation: floatLogo 3s ease-in-out infinite;
+  }
+
+  @keyframes floatLogo {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  h2 {
+    color: var(--green-dark);
+    margin: 0 0 10px 0;
+    font-size: 28px;
+  }
+
+  .subtitle {
+    color: #666;
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .votes-summary {
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(255,255,255,0.98);
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .votes-summary h3 {
+    color: var(--green-dark);
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .selected-candidates {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+  }
+
+  .candidate-selection {
+    background: var(--panel-bg);
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .position {
+    font-weight: 600;
+    color: var(--panel-text);
+    margin-right: 8px;
+  }
+
+  .candidate-name {
+    color: var(--green-dark);
+    font-weight: 500;
+  }
+
+  .party {
+    color: #666;
+    font-size: 0.9em;
+    margin-left: 5px;
+  }
+
+  .confirmation-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .btn i {
+    font-size: 14px;
+  }
+
+  .btn-confirm {
+    background: var(--green-dark);
+    color: var(--text-on-green);
+  }
+
+  .btn-confirm:hover {
+    background: rgba(26,77,46,0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  }
+
+  .btn-confirm:active {
+    transform: translateY(0);
+  }
+
+  .btn-edit {
+    background: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+  }
+
+  .btn-edit:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    .confirmation-card {
+      padding: 20px;
+    }
+    
+    .selected-candidates {
+      grid-template-columns: 1fr;
+    }
+    
+    .confirmation-actions {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

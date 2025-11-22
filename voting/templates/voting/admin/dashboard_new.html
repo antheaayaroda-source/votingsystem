@@ -1,0 +1,391 @@
+{% extends 'voting/admin/base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - Voting System{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        /* Match the voter login header green */
+        --primary-color: #0e412a;
+        --primary-light: #dff4e9;
+        --secondary-color: #175b36;
+        --success-color: #28a745;
+        --info-color: #17a2b8;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --light-color: #e9f7ee;
+        --dark-color: #0b2d1a;
+    }
+
+    body {
+        background-color: #1a4d2e;
+        color: #ffffff;
+    }
+
+    .sidebar {
+        background-color: #4a9d5e;
+        min-height: 100vh;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+
+    .sidebar .nav-link {
+        color: #ecf0f1;
+        padding: 12px 20px;
+        border-radius: 4px;
+        margin: 4px 10px;
+        transition: all 0.3s;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+        background-color: #34495e;
+        color: #fff;
+    }
+
+    .sidebar .nav-link i {
+        width: 24px;
+        text-align: center;
+        margin-right: 10px;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    /* Inner admin area should use the login green */
+    body, .container-fluid, .main-content {
+        background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+        color: #ffffff;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card-header {
+        background: transparent;
+        color: #fff;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        font-weight: 600;
+        padding: 15px 20px;
+        border-radius: 10px 10px 0 0 !important;
+    }
+
+    .card-body {
+        padding: 20px;
+        color: #ffffff;
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .stat-card i {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .stat-card .count {
+        font-size: 2rem;
+        font-weight: 700;
+        display: block;
+        margin: 10px 0;
+        color: #ffffff;
+    }
+
+    .stat-card .label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        color: #ffffff;
+    }
+
+    .recent-activity {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .recent-activity li {
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        color: #ffffff;
+    }
+
+    .recent-activity li:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--primary-light);
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 1.2rem;
+    }
+
+    .activity-details {
+        flex: 1;
+        color: #ffffff;
+    }
+
+    .activity-time {
+        font-size: 0.8rem;
+        color: #ffffff;
+    }
+
+    .btn-admin {
+        padding: 8px 16px;
+        border-radius: 5px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .btn-admin i {
+        margin-right: 5px;
+    }
+
+    .table th {
+        border-top: none;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    .table td {
+        vertical-align: middle;
+        color: #ffffff;
+    }
+
+    .badge {
+        padding: 6px 10px;
+        font-weight: 500;
+        border-radius: 4px;
+    }
+
+    .position-card {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: #fff;
+        border-left: 4px solid var(--primary-light);
+    }
+
+    .position-title {
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 5px;
+    }
+
+    .position-stats {
+        font-size: 0.85rem;
+        color: #ffffff;
+    }
+
+    .progress {
+        height: 8px;
+        border-radius: 4px;
+        background-color: #e9ecef;
+        margin-top: 10px;
+    }
+
+    .progress-bar {
+        background-color: var(--primary-color);
+    }
+
+    .text-muted {
+        color: #ffffff !important;
+    }
+</style>
+{% endblock %}
+
+{% block header %}Dashboard Overview{% endblock %}
+
+{% block header_buttons %}
+    <form action="{% url 'voting:admin_logout' %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+    </form>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);">
+                <i class="bi bi-people"></i>
+                <span class="count">{{ total_voters }}</span>
+                <span class="label">Total Voters</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);">
+                <i class="bi bi-check-circle"></i>
+                <span class="count">{{ total_votes }}</span>
+                <span class="label">Total Votes Cast</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #36b9cc 0%, #258391 100%);">
+                <i class="bi bi-person-badge"></i>
+                <span class="count">{{ total_candidates }}</span>
+                <span class="label">Candidates</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%);">
+                <i class="bi bi-flag"></i>
+                <span class="count">{{ total_parties }}</span>
+                <span class="label">Political Parties</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Positions Overview -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Positions Overview</span>
+                    <a href="{% url 'voting:admin_positions' %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-eye"></i> View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% for position in positions %}
+                    <div class="card mb-3 position-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="position-title">{{ position.name }}</h5>
+                                    <div class="position-stats">
+                                        <span>{{ position.num_candidates }} Candidates • {{ position.num_votes }} Votes</span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="progress" style="width: 150px;">
+                                        {% with percentage=position.num_votes|default:0|floatformat:0 %}
+                                        <div class="progress-bar" role="progressbar" style="width: {{ percentage }}%" 
+                                             aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100">
+                                        </div>
+                                        {% endwith %}
+                                    </div>
+                                    <small class="text-muted">
+                                        {{ position.num_votes|default:0 }} votes
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    Recent Votes
+                </div>
+                <div class="card-body p-0">
+                    {% if recent_votes %}
+                    <ul class="recent-activity p-3">
+                        {% for vote in recent_votes %}
+                        <li>
+                            <div class="activity-icon">
+                                <i class="bi bi-person-check"></i>
+                            </div>
+                            <div class="activity-details">
+                                <strong>{{ vote.voter.user.get_full_name|default:vote.voter.user.username }}</strong>
+                                <div class="text-muted small">
+                                    Voted for {{ vote.candidate.name }} ({{ vote.candidate.position.name }})
+                                </div>
+                                <div class="activity-time">
+                                    <i class="bi bi-clock"></i> {{ vote.created_at|timesince }} ago
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="p-4 text-center text-muted">
+                        <i class="bi bi-inbox" style="font-size: 2rem; opacity: 0.5;"></i>
+                        <p class="mt-2 mb-0">No votes recorded yet</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'voting:admin_votes' %}" class="btn btn-sm btn-outline-primary">
+                        View All Votes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    Quick Actions
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'voting:admin_add_candidate' %}" class="btn btn-admin btn-primary w-100">
+                                <i class="bi bi-person-plus"></i> Add Candidate
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'voting:admin_add_voter' %}" class="btn btn-admin btn-success w-100">
+                                <i class="bi bi-person-plus"></i> Add Voter
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'voting:admin_add_party' %}" class="btn btn-admin btn-info w-100">
+                                <i class="bi bi-flag"></i> Add Party
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'voting:admin_export_results' %}" class="btn btn-admin btn-warning w-100">
+                                <i class="bi bi-download"></i> Export Results
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize any required JavaScript here
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add any dashboard-specific JavaScript here
+        console.log('Admin dashboard loaded');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+[
+  {
+    "model": "voting.position",
+    "pk": 1,
+    "fields": {
+      "name": "President"
+    }
+  },
+  {
+    "model": "voting.position",
+    "pk": 2,
+    "fields": {
+      "name": "Vice President"
+    }
+  },
+  {
+    "model": "voting.position",
+    "pk": 3,
+    "fields": {
+      "name": "Secretary"
+    }
+  },
+  {
+    "model": "voting.candidate",
+    "pk": 1,
+    "fields": {
+      "name": "Juan Dela Cruz",
+      "position": 1
+    }
+  },
+  {
+    "model": "voting.candidate",
+    "pk": 2,
+    "fields": {
+      "name": "Maria Santos",
+      "position": 1
+    }
+  },
+  {
+    "model": "voting.candidate",
+    "pk": 3,
+    "fields": {
+      "name": "Pedro Reyes",
+      "position": 2
+    }
+  },
+  {
+    "model": "voting.candidate",
+    "pk": 4,
+    "fields": {
+      "name": "Ana Lopez",
+      "position": 2
+    }
+  },
+  {
+    "model": "voting.candidate",
+    "pk": 5,
+    "fields": {
+      "name": "Jose Garcia",
+      "position": 3
+    }
+  },
+  {
+    "model": "voting.candidate",
+    "pk": 6,
+    "fields": {
+      "name": "Liza Ramos",
+      "position": 3
+    }
+  }
+]

@@ -1,0 +1,648 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Vote Page</title>
+  <style>
+    :root {
+      --header-bottom: 24px;
+      --header-candidates-top: 4px;
+      --pos-margin-top: 20px;
+      --pos-margin-bottom: 26px;
+    }
+    :root {
+      --green: #4a9d5e;
+      --green-dark: #1a4d2e;
+      --text-on-green: #ffffff;
+      --green-soft: rgba(74,157,94,0.12);
+      --accent: #ff8c00;
+      --panel-text: #ffffff;
+    }
+    
+    body {
+      font-family: Poppins, sans-serif;
+      background: linear-gradient(135deg, #4a9d5e, #1a4d2e) !important;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: transparent;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: none;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: var(--header-bottom);
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-on-green);
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .topbar .welcome-name { opacity: 0.95; }
+    .topbar a.logout {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      background: rgba(255,255,255,0.12);
+      padding: 6px 10px;
+      border-radius: 8px;
+      transition: background .2s ease, transform .08s ease;
+    }
+    .topbar a.logout:hover { background: rgba(255,255,255,0.2); }
+    .topbar a.logout:active { transform: translateY(1px); }
+    .logo-wrap {
+      animation: floatLogo 3s ease-in-out infinite;
+      flex: 0 0 auto;
+      border: none;
+      box-shadow: none;
+      outline: none;
+      isolation: auto;
+      background: transparent !important;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo {
+      width: 180px;
+      height: auto;
+      object-fit: contain;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0;
+      mix-blend-mode: multiply;
+    }
+    @keyframes floatLogo {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0); }
+    }
+    h2 {
+      text-align: center;
+      color: #ffffff;
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #e6ffe6;
+      margin-top: 6px;
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .position {
+      margin-top: var(--pos-margin-top);
+      margin-bottom: var(--pos-margin-bottom);
+      padding: 12px 0;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+    }
+    
+    .position-type {
+      color: #ffffff;
+      text-align: center;
+      margin: 10px 0 15px 0;
+      padding: 8px 0;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      font-size: 1.4em;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .position h3 {
+      color: #ffffff;
+      margin: 8px 0 10px 0;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      border-left: 4px solid rgba(255,255,255,0.4);
+      padding-left: 10px;
+      opacity: 0.95;
+    }
+    .candidates {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 14px;
+    }
+    .candidate { display: block; }
+    .candidate-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(26,77,46,0.85);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      border: 2px solid transparent;
+      transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+      position: relative;
+      overflow: visible;
+    }
+    
+    @keyframes blink-border {
+      0% { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2); }
+      50% { box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.8); }
+      100% { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2); }
+    }
+    .candidate-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.45); }
+    .candidate-card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(255,140,0,.35), 0 10px 24px rgba(0,0,0,.5); }
+    .party-badge {
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-align: center;
+      width: 100%;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .candidate-photo {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      margin-bottom: 8px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      position: relative;
+      animation: blink-border 2s infinite;
+      box-sizing: content-box;
+    }
+    .candidate-photo[src*="logo"], .mini-photo[src*="logo"],
+    .candidate-photo[src$="/logo.png"], .mini-photo[src$="/logo.png"],
+    .candidate-photo[alt*="logo"], .mini-photo[alt*="logo"] {
+      background: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+      border-radius: 50% !important;
+      clip-path: circle(42% at 50% 50%) !important;
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 46%, transparent 47%);
+      mask-image: radial-gradient(circle at 50% 50%, #000 46%, transparent 47%);
+      object-fit: contain !important;
+      padding: 0 !important;
+      animation: floatLogo 3.5s ease-in-out infinite;
+    }
+    .candidate-photo[alt*="Atasha Brigo"] { object-position: center 10%; }
+    .candidate-card[data-cand-name="Atasha Brigo"] .candidate-photo { object-position: center 10%; }
+    @keyframes blink {
+      from { box-shadow: 0 0 5px var(--accent); }
+      to   { box-shadow: 0 0 20px var(--accent); }
+    }
+    .candidate-name {
+      color: var(--text-on-green);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .candidate-extra { display: none; color: var(--text-on-green); text-align: center; font-size: 13px; opacity: .95; }
+    .candidate-card.selected .candidate-extra { display: block; animation: fadeSlide .25s ease both; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .candidate-name input[type="radio"] { filter: brightness(200%) saturate(120%); }
+    @keyframes borderBlink {
+      0% { box-shadow: 0 0 0 0 rgba(255,165,0,0.6); }
+      50% { box-shadow: 0 0 12px 4px rgba(255,165,0,0.85); }
+      100% { box-shadow: 0 0 0 0 rgba(255,165,0,0.6); }
+    }
+    input[type="radio"] { margin-right: 8px; accent-color: var(--text-on-green); }
+
+    .btn-container { display: flex; justify-content: center; gap: 14px; margin-top: 28px; }
+    .back-btn { background: #666; color: white; padding: 12px 18px; border: none; border-radius: 10px; text-align: center; text-decoration: none; font-size: 16px; cursor: pointer; }
+    button { background: linear-gradient(135deg, var(--green), var(--green-dark)); color: var(--panel-text); padding: 12px 18px; border: none; border-radius: 10px; text-align: center; font-size: 16px; cursor: pointer; font-weight: 700; }
+    button[disabled] { opacity: 0.6; cursor: not-allowed; }
+    .back-btn:hover { background: #8b8b8b; }
+    button:hover:not([disabled]) { filter: brightness(1.05); }
+
+    .note {
+      text-align: center;
+      margin-top: 10px;
+      color: #ffffff;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .modal { background: var(--green-dark); border-radius: 14px; width: min(520px, 92vw); max-height: 80vh; color: var(--text-on-green); box-shadow: 0 10px 30px rgba(0,0,0,0.4); overflow: hidden; display: flex; flex-direction: column; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(255,255,255,0.06); flex-shrink: 0; }
+    .modal-title { font-weight: 800; margin: 0; font-size: 18px; }
+    .modal-close { background: transparent; border: none; color: #fff; font-size: 20px; cursor: pointer; line-height: 1; }
+    .modal-body { padding: 16px; display: grid; grid-template-columns: 130px 1fr; gap: 16px; align-items: start; overflow-y: auto; }
+    .modal-photo { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; border: 3px solid orange; box-shadow: 0 0 10px orange; }
+    .modal-meta { display: grid; gap: 8px; }
+    .meta-row { display: grid; grid-template-columns: 110px 1fr; gap: 8px; color: var(--text-on-green); }
+    .meta-key { opacity: .85; font-weight: 700; }
+    .meta-val { color: #ffffff; font-size: 14px; line-height: 1.6; }
+
+    .header-candidates { margin-top: var(--header-candidates-top); width: 100%; }
+    .header-candidates-rows { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+    .mini-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch; }
+    .header-candidates-col { display: flex; flex-direction: column; gap: 10px; }
+    .mini-card { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: rgba(26,77,46,0.85); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .mini-photo { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+    .mini-info { display: flex; flex-direction: column; }
+    .mini-name { color: var(--text-on-green); font-weight: 700; line-height: 1.1; }
+    .mini-meta { color: rgba(230,255,230,0.95); font-size: 12px; opacity: .9; }
+
+    .header-candidates-positions { margin-top: 8px; display: grid; gap: 10px; }
+    .mini-pos-title { color: #e6ffe6; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .4px; opacity: .95; }
+    .mini-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .team-rules-btn {
+      display: inline-block !important;
+      color: #e6ffe6 !important;
+      font-weight: 800 !important;
+      font-size: 12px !important;
+      text-transform: uppercase !important;
+      letter-spacing: .4px !important;
+      opacity: .95 !important;
+      margin-bottom: 4px !important;
+      background: rgba(255,255,255,0.08) !important;
+      padding: 4px 10px !important;
+      border-radius: 9999px !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+    }
+    .team-rules-btn:hover {
+      background: rgba(255,255,255,0.15) !important;
+      opacity: 1 !important;
+    }
+
+    .position .candidates { display: grid !important; }
+    .header-candidates { display: none; }
+
+    .rules-card { cursor: pointer; transition: transform .05s ease, box-shadow .2s ease; }
+    .rules-card:active { transform: scale(0.995); }
+
+    #viewRulesBtn:hover { background: rgba(255,255,255,0.2) !important; }
+
+    @media (max-width: 600px) {
+      .header { flex-direction: column; gap: 8px; }
+      .logo { 
+        width: 120px; 
+        height: auto; 
+        padding: 0; 
+        margin: 0 auto;
+        display: block;
+      }
+      h2 { font-size: 20px; }
+      .container { padding: 20px; margin: 20px; }
+    }
+  </style>
+</head>
+<body>
+  {% if user.is_authenticated %}
+  <div class="topbar">
+    <div class="welcome-name">Welcome! {{ user.get_full_name|default:user.username }}</div>
+    <form action="{% url 'voting:voter_logout' %}" method="post" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit" class="logout" style="background:none;border:none;color:#ffffff;font-weight:700;cursor:pointer;padding:6px 10px;">Log Out</button>
+    </form>
+  </div>
+  {% endif %}
+  <div class="container">
+    <form id="voteForm" method="post">
+      {% csrf_token %}
+    <div class="header">
+      <div class="logo-wrap">
+      <img class="logo" src="{% static 'images/logo.png' %}" alt="School Logo" style="background: transparent;">
+    </div>
+      <div>
+        <h2>Welcome to our SSLG Officers</h2>
+        <div class="subtitle">Review each position and choose the best representative for your school. Your vote matters.</div>
+      </div>
+    </div>
+
+  <div id="rulesModalBackdrop" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rulesModalTitle">
+      <div class="modal-header">
+        <h3 id="rulesModalTitle" class="modal-title">Rules</h3>
+        <button id="rulesModalClose" class="modal-close" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body" style="grid-template-columns: 1fr; max-height: calc(80vh - 60px);">
+        <div class="modal-meta" style="gap: 0;">
+          <div id="rulesModalContent" class="meta-val" style="white-space: pre-wrap; font-size: 13px; line-height: 1.5;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    {% regroup positions by position_type as position_groups %}
+    
+    {% for group in position_groups %}
+        {% if group.grouper %}
+            <h2 class="position-type">{{ group.grouper }}</h2>
+        {% endif %}
+        
+        {% for pos in group.list %}
+            <div class="position" data-position-id="{{ pos.id }}">
+                {% if pos.display_name %}<h3>{{ pos.display_name }}</h3>{% endif %}
+                <div class="candidates">
+                {% for cand in pos.candidate_set.all %}
+              <div class="candidate">
+                <div class="candidate-card"
+                     data-cand-id="{{ cand.id }}"
+                     data-cand-name="{% if cand.name and 'jeyn santos' in cand.name|lower %}{{ cand.name|cut:'President'|cut:'president' }}{% else %}{{ cand.name }}{% endif %}"
+                     data-cand-position="{{ pos.name }}"
+                     data-cand-party="{% if cand.party %}{{ cand.party.name }}{% else %}Independent{% endif %}"
+                     data-cand-photo="{% if cand.photo %}{{ cand.photo.url }}{% else %}{% static 'voting/images/default-avatar.png' %}{% endif %}"
+                     style="cursor:pointer;">
+                  <div class="party-badge">
+                    {% if cand.party %}{{ cand.party.name|upper }}{% else %}INDEPENDENT{% endif %}
+                  </div>
+                  {% if cand.photo and 'logo' not in cand.photo.url %}
+                    <img class="candidate-photo" src="{{ cand.photo.url }}" alt="{{ cand.name }} photo" title="{{ cand.name }} - Candidate for {{ pos.name }}">
+                  {% else %}
+                    <img class="candidate-photo" src="{% static 'voting/images/default-avatar.png' %}" alt="No photo" title="No photo available">
+                  {% endif %}
+                  <div class="candidate-name">
+                    <input type="radio" name="{{ pos.id }}" value="{{ cand.id }}">
+                    {% if cand.name and 'jeyn santos' in cand.name|lower %}{{ cand.name|cut:'President'|cut:'president' }}{% else %}{{ cand.name }}{% endif %}
+                  </div>
+                </div>
+              </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+      <div class="btn-container" style="margin-top:40px;">
+        <button type="submit" id="submitVote" disabled>Submit Vote</button>
+      </div>
+      <div class="note" id="noteText">Please select a candidate for every position to enable submit.</div>
+    </form>
+    <div style="text-align: center; margin-top: 20px;">
+      <button type="button" id="viewRulesBtn" class="rules-trigger" 
+              data-title="Team Rules and Guidelines" 
+              data-content="✨TEAM GALING✨&#10;Excellence in Action, Leadership with Integrity&#10;&#10;EXCELLENCE FIRST&#10;• Every member must give their best in both academics and leadership to inspire others.&#10;&#10;INTEGRITY AND HONESTY&#10;• Never spread rumors or fake information about other candidates.&#10;• Always be truthful in all campaign materials.&#10;&#10;RESPECT AND FAIRNESS&#10;• Respect everyone's opinion, even those who support the other team.&#10;• Treat all students equally — no favoritism.&#10;&#10;LEAD BY EXAMPLE&#10;• Be punctual, responsible, and kind so that others can see your leadership through your actions.&#10;&#10;VISION FOR ALL&#10;• Focus your campaign on how your plans will benefit the entire student body, not just your friends or class.&#10;&#10;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#10;&#10;✨TEAM SIGLA✨&#10;Energy, Unity, and Action!&#10;&#10;BE A ROLE MODEL&#10;• Every member must show positivity, discipline, and teamwork at all times.&#10;&#10;CAMPAIGN WITH ENERGY AND RESPECT&#10;• Always promote the team's goals in a cheerful and respectful way.&#10;• No negative words or insults toward other candidates.&#10;&#10;PROMOTE SCHOOL SPIRIT&#10;• Encourage classmates to join school activities and promote unity through small acts of kindness.&#10;&#10;CREATIVE AND HONEST CAMPAIGN&#10;• Use creative posters, videos, and slogans that reflect the team's true mission.&#10;• Be honest about what you can do - never make false promises.&#10;&#10;SERVE BEFORE YOU LEAD&#10;• Show leadership through service. Help others first, even before asking for votes."
+              style="background: rgba(255,255,255,0.12); padding: 10px 20px; font-size: 14px;">View Rules</button>
+    </div>
+  </div>
+
+  <div id="candModalBackdrop" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="candModalTitle">
+      <div class="modal-header">
+        <h3 id="candModalTitle" class="modal-title">Candidate Profile</h3>
+        <button id="candModalClose" class="modal-close" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <img id="candModalPhoto" class="modal-photo" src="" alt="Candidate photo">
+        <div class="modal-meta">
+          <div class="meta-row"><div class="meta-key">Name</div><div id="candModalName" class="meta-val"></div></div>
+          <div class="meta-row"><div class="meta-key">Party</div><div id="candModalParty" class="meta-val"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const form = document.getElementById('voteForm');
+      const submitBtn = document.getElementById('submitVote');
+      const note = document.getElementById('noteText');
+
+      function allPositionsSelected() {
+        const positionDivs = document.querySelectorAll('.position');
+        const seenIds = new Set();
+        for (const pos of positionDivs) {
+          const posId = pos.getAttribute('data-position-id');
+          if (seenIds.has(posId)) continue;
+          seenIds.add(posId);
+          const radios = form.querySelectorAll('input[type="radio"][name="' + posId + '"]');
+          let checked = false;
+          radios.forEach(r => { if (r.checked) checked = true; });
+          if (!checked) return false;
+        }
+        return true;
+      }
+
+      function updateSubmitState() {
+        const ready = allPositionsSelected();
+        submitBtn.disabled = !ready;
+        note.style.display = ready ? 'none' : 'block';
+      }
+
+      function updateCardSelection(radio) {
+        const name = radio.getAttribute('name');
+        document.querySelectorAll('.position input[type="radio"][name="' + name + '"]').forEach(el => {
+          const card = el.closest('.candidate-card');
+          if (card) card.classList.remove('selected');
+        });
+        const chosen = radio.closest('.candidate-card');
+        if (chosen) chosen.classList.add('selected');
+      }
+
+      document.querySelectorAll('#voteForm input[type="radio"]').forEach(r => {
+        r.addEventListener('change', function() {
+          updateSubmitState();
+          updateCardSelection(this);
+        });
+      });
+
+      window.addEventListener('load', function(){
+        updateSubmitState();
+        document.querySelectorAll('#voteForm input[type="radio"]').forEach(r => { if (r.checked) updateCardSelection(r); });
+      });
+
+      form.addEventListener('submit', function(e) {
+        if (!allPositionsSelected()) {
+          e.preventDefault();
+          updateSubmitState();
+        }
+      });
+    })();
+
+    function onTeamChange(val) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('team', val);
+      window.location.href = url.toString();
+    }
+  </script>
+  <script>
+    function onSideChange(side, val) {
+      const url = new URL(window.location.href);
+      url.searchParams.set(side, val);
+      window.location.href = url.toString();
+    }
+  </script>
+  <script>
+    (function() {
+      const backdrop = document.getElementById('candModalBackdrop');
+      const closeBtn = document.getElementById('candModalClose');
+      const elName = document.getElementById('candModalName');
+      const elParty = document.getElementById('candModalParty');
+      const elPhoto = document.getElementById('candModalPhoto');
+
+      function openModal(data) {
+        elName.textContent = data.name || '';
+        elParty.textContent = data.party || '';
+        elPhoto.src = data.photo || '';
+        backdrop.style.display = 'flex';
+      }
+
+      function closeModal() {
+        backdrop.style.display = 'none';
+      }
+
+      function bindCardEvents() {
+        document.querySelectorAll('.candidate-card').forEach(card => {
+          if (!card.hasAttribute('tabindex')) card.setAttribute('tabindex', '0');
+          card.addEventListener('click', function(e) {
+            if (e.target && (e.target.tagName === 'INPUT' || e.target.closest('label'))) return;
+            const radio = card.querySelector('input[type="radio"]');
+            if (radio) {
+              radio.checked = true;
+              radio.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          });
+          card.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+              const radio = card.querySelector('input[type="radio"]');
+              if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+              }
+            }
+          });
+        });
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindCardEvents);
+      } else {
+        bindCardEvents();
+      }
+
+      backdrop.addEventListener('click', function(e) {
+        if (e.target === backdrop) closeModal();
+      });
+      closeBtn.addEventListener('click', closeModal);
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+    })();
+  </script>
+  <script>
+    (function(){
+      const img = document.querySelector('.logo-wrap .logo');
+      if (!img) return;
+      function makeWhiteTransparent(target){
+        const source = new Image();
+        source.crossOrigin = 'anonymous';
+        source.src = target.src;
+        source.onload = function(){
+          const w = source.naturalWidth || source.width;
+          const h = source.naturalHeight || source.height;
+          if (!w || !h) return;
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(source, 0, 0, w, h);
+          const imgData = ctx.getImageData(0, 0, w, h);
+          const data = imgData.data;
+          const tol = 240;
+          for (let i = 0; i < data.length; i += 4) {
+            const r = data[i], g = data[i+1], b = data[i+2];
+            if (r >= tol && g >= tol && b >= tol) { data[i+3] = 0; }
+          }
+          ctx.putImageData(imgData, 0, 0);
+          try { target.src = canvas.toDataURL('image/png'); } catch (e) {}
+        };
+      }
+      if (img.complete) makeWhiteTransparent(img); else img.addEventListener('load', () => makeWhiteTransparent(img));
+    })();
+  </script>
+  <script>
+    function openTeamRules(event) {
+      event.preventDefault();
+      const btn = event.target.closest('.team-rules-btn');
+      if (!btn) return;
+      
+      const teamName = btn.getAttribute('data-team-name') || 'Team Rules';
+      const teamRules = btn.getAttribute('data-team-rules') || 'No rules available';
+      
+      const rulesBackdrop = document.getElementById('rulesModalBackdrop');
+      const rulesTitle = document.getElementById('rulesModalTitle');
+      const rulesContent = document.getElementById('rulesModalContent');
+      
+      rulesTitle.textContent = teamName;
+      rulesContent.textContent = teamRules;
+      rulesBackdrop.style.display = 'flex';
+    }
+  </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <script>
+    (function() {
+      const rulesBackdrop = document.getElementById('rulesModalBackdrop');
+      const rulesClose = document.getElementById('rulesModalClose');
+      const rulesTitle = document.getElementById('rulesModalTitle');
+      const rulesContent = document.getElementById('rulesModalContent');
+      let noteDisplayState = '';
+
+      function openRulesFromTrigger(trigger) {
+        const title = trigger.getAttribute('data-title') || 'Voting Rules';
+        const raw = trigger.getAttribute('data-content') || 'No rules available';
+        let decoded = raw;
+        try {
+          decoded = JSON.parse('"' + raw.replace(/"/g, '\\"') + '"');
+        } catch (e) {
+          decoded = raw.replace(/\\n/g, '\n');
+        }
+        rulesTitle.textContent = title;
+        rulesContent.textContent = decoded;
+        noteDisplayState = document.getElementById('noteText').style.display;
+        document.getElementById('noteText').style.display = 'none';
+        rulesBackdrop.style.display = 'flex';
+      }
+
+      function closeRules() { 
+        rulesBackdrop.style.display = 'none';
+        document.getElementById('noteText').style.display = noteDisplayState;
+      }
+
+      function bindRules() {
+        document.querySelectorAll('.rules-trigger').forEach(btn => {
+          btn.addEventListener('click', function() { openRulesFromTrigger(btn); });
+          btn.addEventListener('keydown', function(e) { if (e.key === 'Enter') openRulesFromTrigger(btn); });
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindRules);
+      } else { bindRules(); }
+
+      rulesBackdrop.addEventListener('click', function(e) { if (e.target === rulesBackdrop) closeRules(); });
+      rulesClose.addEventListener('click', closeRules);
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeRules(); });
+    })();
+  </script>
+</body>
+</html>

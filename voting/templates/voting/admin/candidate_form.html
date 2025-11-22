@@ -1,0 +1,164 @@
+{% extends 'voting/admin/base.html' %}
+
+{% block title %}{% if form.instance.id %}Edit{% else %}Add{% endif %} Candidate - {{ block.super }}{% endblock %}
+
+{% block header %}{% if form.instance.id %}Edit{% else %}Add New{% endif %} Candidate{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.name.id_for_label }}" class="form-label">
+                                    Full Name <span class="text-danger">*</span>
+                                </label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.name.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.position.id_for_label }}" class="form-label">
+                                    Position <span class="text-danger">*</span>
+                                </label>
+                                {{ form.position }}
+                                {% if form.position.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.position.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.party.id_for_label }}" class="form-label">
+                                    Political Party
+                                </label>
+                                {{ form.party }}
+                                {% if form.party.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.party.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.photo.id_for_label }}" class="form-label">
+                                    Photo
+                                </label>
+                                {% if form.instance.photo %}
+                                    <div class="mb-2">
+                                        <img src="{{ form.instance.photo.url }}" alt="Current photo" style="max-width: 100px; max-height: 100px;" class="img-thumbnail">
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input" type="checkbox" name="photo-clear" id="photo-clear">
+                                            <label class="form-check-label" for="photo-clear">
+                                                Clear current photo
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {{ form.photo }}
+                                {% if form.photo.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.photo.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Recommended size: 300x300px, JPG or PNG format</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="{{ form.bio.id_for_label }}" class="form-label">Biography</label>
+                        {{ form.bio }}
+                        {% if form.bio.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.bio.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'voting:admin_candidates' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Candidate
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add Bootstrap validation classes
+        const forms = document.querySelectorAll('form');
+        
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        });
+        
+        // Preview image before upload
+        const photoInput = document.getElementById('{{ form.photo.id_for_label }}');
+        if (photoInput) {
+            photoInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Create or update image preview
+                        let preview = document.getElementById('photo-preview');
+                        if (!preview) {
+                            preview = document.createElement('img');
+                            preview.id = 'photo-preview';
+                            preview.style.maxWidth = '200px';
+                            preview.style.maxHeight = '200px';
+                            preview.className = 'img-thumbnail mt-2';
+                            photoInput.parentNode.insertBefore(preview, photoInput.nextSibling);
+                        }
+                        preview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

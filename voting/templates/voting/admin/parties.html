@@ -1,0 +1,196 @@
+{% extends 'voting/admin/base.html' %}
+{% load static %}
+
+{% block title %}Political Parties - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--green);
+        color: var(--text-on-green);
+    }
+    .card-body {
+        color: var(--text-on-green);
+    }
+    .text-muted {
+        color: rgba(165,214,167,0.95) !important;
+    }
+</style>
+{% endblock %}
+
+{% block header_buttons %}
+    <a href="{% url 'voting:admin_add_party' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Add Party
+    </a>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Search Bar -->
+    <div class="row mb-4">
+        <div class="col-md-6 offset-md-3">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" id="searchInput" class="form-control" placeholder="Search parties...">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for party in parties %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100" style="background-color: rgba(26, 77, 46, 0.9);">
+                <div class="card-header" style="background: linear-gradient(135deg, var(--green), var(--green-dark));">
+                    <h5 class="card-title mb-0">{{ party.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <!-- President -->
+                    <div class="mb-3">
+                        <h6 class="text-muted">President</h6>
+                        <div class="d-flex align-items-center">
+                            {% if party.president %}
+                                {% if party.president.photo %}
+                                <img src="{{ party.president.photo.url }}" 
+                                     alt="{{ party.president.name }}" 
+                                     class="img-thumbnail me-2" 
+                                     style="width: 50px; height: 50px; object-fit: cover;">
+                                {% endif %}
+                                <div>
+                                    <p class="mb-0">{{ party.president.name }}</p>
+                                    <small class="text-muted">{{ party.president.position.name }}</small>
+                                </div>
+                            {% else %}
+                                <span class="text-muted">Not assigned</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Vice President -->
+                    <div class="mb-3">
+                        <h6 class="text-muted">Vice President</h6>
+                        <div class="d-flex align-items-center">
+                            {% if party.vice_president %}
+                                {% if party.vice_president.photo %}
+                                <img src="{{ party.vice_president.photo.url }}" 
+                                     alt="{{ party.vice_president.name }}" 
+                                     class="img-thumbnail me-2" 
+                                     style="width: 50px; height: 50px; object-fit: cover;">
+                                {% endif %}
+                                <div>
+                                    <p class="mb-0">{{ party.vice_president.name }}</p>
+                                    <small class="text-muted">{{ party.vice_president.position.name }}</small>
+                                </div>
+                            {% else %}
+                                <span class="text-muted">Not assigned</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Secretary -->
+                    <div class="mb-3">
+                        <h6 class="text-muted">Secretary</h6>
+                        <div class="d-flex align-items-center">
+                            {% if party.secretary %}
+                                {% if party.secretary.photo %}
+                                <img src="{{ party.secretary.photo.url }}" 
+                                     alt="{{ party.secretary.name }}" 
+                                     class="img-thumbnail me-2" 
+                                     style="width: 50px; height: 50px; object-fit: cover;">
+                                {% endif %}
+                                <div>
+                                    <p class="mb-0">{{ party.secretary.name }}</p>
+                                    <small class="text-muted">{{ party.secretary.position.name }}</small>
+                                </div>
+                            {% else %}
+                                <span class="text-muted">Not assigned</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="btn-group w-100">
+                        <a href="{% url 'voting:admin_edit_party' party.id %}" 
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <button type="button" 
+                                class="btn btn-outline-danger btn-sm" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#deleteModal{{ party.id }}">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteModal{{ party.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Confirm Delete</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete <strong>{{ party.name }}</strong>? This action cannot be undone.</p>
+                            {% if party.president or party.vice_president or party.secretary %}
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    This party has assigned candidates. Deleting it will remove all associated candidates.
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </button>
+                            <form action="{% url 'voting:admin_delete_party' party.id %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert" style="background: rgba(255,255,255,0.12); color: var(--text-on-green); border: 1px solid var(--panel-border);">
+                <i class="bi bi-info-circle"></i> No political parties found. 
+                <a href="{% url 'voting:admin_add_party' %}" class="alert-link" style="color: var(--accent);">Add a new party</a> to get started.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const cards = document.querySelectorAll('.card');
+        
+        if (searchInput && cards.length > 0) {
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                cards.forEach(card => {
+                    const cardText = card.textContent.toLowerCase();
+                    const isVisible = cardText.includes(searchTerm);
+                    card.closest('.col-md-6').style.display = isVisible ? 'block' : 'none';
+                });
+            });
+        }
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+{% endblock %}

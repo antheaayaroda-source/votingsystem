@@ -1,0 +1,125 @@
+{% extends 'voting/admin/base.html' %}
+
+{% block title %}Manage Voters - {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--green);
+        color: var(--text-on-green);
+    }
+    .table, .table thead th, .table tbody td {
+        color: var(--text-on-green);
+        border-color: rgba(255,255,255,0.1);
+    }
+    .table thead th {
+        background: rgba(0,0,0,0.2);
+    }
+    .text-muted {
+        color: rgba(165,214,167,0.95) !important;
+    }
+</style>
+{% endblock %}
+
+{% block header %}Voters{% endblock %}
+
+{% block header_buttons %}
+    <a href="{% url 'voting:admin_add_voter' %}" class="btn btn-sm btn-primary">
+        <i class="bi bi-person-plus"></i> Add Voter
+    </a>
+{% endblock %}
+
+{% block content %}
+<div class="card" style="background-color: rgba(26, 77, 46, 0.9);">
+    <div class="card-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, var(--green), var(--green-dark));">
+        <h5 class="mb-0">Voters List</h5>
+        <div class="input-group" style="max-width: 300px;">
+            <input type="text" class="form-control form-control-sm" placeholder="Search voters..." id="searchInput">
+            <button class="btn btn-outline-secondary btn-sm" type="button">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if voters %}
+        <div class="table-responsive">
+            <table class="table table-hover" id="votersTable">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>ID Number</th>
+                        <th>Name</th>
+                        <th>Grade Level</th>
+                        <th>Strand</th>
+                        <th class="text-center">Voted</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for voter in voters %}
+                    <tr>
+                        <td>{{ voter.seq }}</td>
+                        <td>{{ voter.id_number|default:"-" }}</td>
+                        <td>
+                            <strong>{{ voter.user.get_full_name|default:voter.user.username }}</strong>
+                            <div class="text-muted small">{{ voter.user.email }}</div>
+                        </td>
+                        <td>{{ voter.grade_level|default:"-" }}</td>
+                        <td>{{ voter.strand|default:"-" }}</td>
+                        <td class="text-center">
+                            {% if voter.has_voted %}
+                                <span class="badge bg-success">Yes</span>
+                            {% else %}
+                                <span class="badge bg-secondary">No</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group btn-group-sm">
+                                <a href="#" class="btn btn-outline-primary" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-danger" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-people fs-1" style="color: rgba(165,214,167,0.95);"></i>
+            <h5 class="mt-3" style="color: var(--text-on-green);">No voters found</h5>
+            <p style="color: rgba(165,214,167,0.95);">Add new voters to get started</p>
+            <a href="{% url 'voting:admin_add_voter' %}" class="btn btn-primary mt-2">
+                <i class="bi bi-person-plus"></i> Add Voter
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const table = document.getElementById('votersTable');
+        
+        if (searchInput && table) {
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+                
+                Array.from(rows).forEach(function(row) {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

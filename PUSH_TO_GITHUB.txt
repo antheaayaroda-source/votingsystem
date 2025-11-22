@@ -1,0 +1,29 @@
+Commands to push your updated code to GitHub:
+
+1. Open Git Bash or Command Prompt in your project folder
+
+2. Add all changes:
+   git add .
+
+3. Commit the changes:
+   git commit -m "Configure for Render deployment"
+
+4. Push to your repository:
+   git push origin main
+
+   (If your branch is 'master', use: git push origin master)
+
+5. Go to Render Dashboard:
+   - Click "New +" → "Blueprint"
+   - Connect your GitHub repository: votingsystem
+   - Render will detect render.yaml and auto-deploy
+
+6. After deployment, set ALLOWED_HOSTS in Render:
+   - Go to your service → Environment
+   - Add/Update ALLOWED_HOSTS with your Render URL
+   - Example: voting-system.onrender.com
+
+7. Create superuser via Render Shell:
+   python manage.py createsuperuser
+
+Done! Your voting system will be live.

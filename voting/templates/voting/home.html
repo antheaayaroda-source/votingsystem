@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting System</title>
+</head>
+<body>
+    <h1>Candidate List</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: green;">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <ul>
+        {% for candidate in candidates %}
+            <li>
+                {{ candidate.name }} - {{ candidate.position.name }}
+                <a href="#">Vote</a>
+            </li>
+        {% empty %}
+            <li>No candidates available.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

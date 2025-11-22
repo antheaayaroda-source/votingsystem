@@ -1,0 +1,595 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voter Login - Voting System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    
+    .container {
+      background: var(--panel-bg);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .logo {
+      width: 180px;
+      height: auto;
+      margin: 0 auto 15px;
+      display: block;
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+    
+    h2 {
+      color: var(--green-dark);
+      margin: 0 0 25px 0;
+      font-size: 26px;
+      font-weight: 700;
+      text-align: center;
+    }
+    
+    .tab-container {
+      margin-bottom: 25px;
+    }
+    
+    .tab-buttons {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e1e8ed;
+    }
+    
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      background: none;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      color: #777;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .tab-btn.active {
+      color: var(--green);
+      border-bottom: 3px solid var(--green);
+      margin-bottom: -2px;
+    }
+    
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #555;
+      font-weight: 500;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .form-row .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background-color: var(--green);
+      color: var(--text-on-green);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--green-dark);
+    }
+    
+    .alert {
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .alert-error, .alert-danger {
+      background-color: #ffebee;
+      color: #c62828;
+      border-left: 4px solid #c62828;
+    }
+    
+    .alert-success {
+      background-color: rgba(230,255,230,0.9);
+      color: var(--green-dark);
+      border-left: 4px solid var(--green-dark);
+    }
+    
+    .alert-info {
+      background-color: #e3f2fd;
+      color: #1565c0;
+      border-left: 4px solid #1565c0;
+    }
+    
+    .forgot-password {
+      text-align: right;
+      margin-top: -10px;
+      margin-bottom: 20px;
+    }
+    
+    .forgot-password a {
+      color: var(--green-dark);
+      text-decoration: none;
+      font-size: 13px;
+    }
+    
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+    
+    .remember-me {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .remember-me input {
+      width: auto;
+      margin: 0 8px 0 0;
+    }
+    
+    .remember-me label {
+      margin: 0;
+      font-size: 14px;
+      color: #555;
+    }
+    
+    select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e1e8ed;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Poppins', sans-serif;
+      background-color: rgb(241, 245, 239);
+      cursor: pointer;
+    }
+    
+    select:focus {
+      border-color: var(--green);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(74,157,94,0.12);
+    }
+    
+    .input-group {
+      position: relative;
+    }
+    
+    .input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #777;
+      font-size: 16px;
+    }
+    
+    .input-group input {
+      padding-left: 40px !important;
+    }
+    
+    form input {
+      width: 100%;
+      padding: 14px 16px;
+      margin-bottom: 5px;
+      border-radius: 10px;
+      border: 2px solid #e1e8ed;
+      outline: none;
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    form input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(74,157,94,0.12);
+    }
+    
+    .forgot-password {
+      display: block;
+      text-align: right;
+      font-size: 12px;
+      color: var(--green-dark);
+      text-decoration: none;
+      margin-top: 5px;
+      transition: color 0.2s;
+    }
+    
+    .forgot-password:hover {
+      color: var(--green);
+      text-decoration: underline;
+    }
+    
+    button {
+      width: 100%;
+      padding: 14px;
+      background: var(--green-dark);
+      color: var(--text-on-green);
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+    
+    button:hover {
+      background: rgba(26,77,46,0.92);
+      transform: translateY(-1px);
+    }
+    
+    button:active {
+      transform: translateY(1px);
+    }
+    
+    .login-footer {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .login-footer a {
+      color: var(--green-dark);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .login-footer a:hover {
+      color: var(--green);
+      text-decoration: underline;
+    }
+    
+    .error-message {
+      color: #e74c3c;
+      font-size: 12px;
+      margin-top: 5px;
+      text-align: left;
+      display: none;
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      color: #999;
+      font-size: 13px;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #eee;
+      margin: 0 10px;
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+      }
+      
+      h2 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 15px;">
+      <img src="{% static 'voting/images/logo.png' %}" alt="School Logo" class="logo">
+      <h2>Voter Login</h2>
+    </div>
+    
+    <div class="tab-container">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="login">Sign In</button>
+        <button class="tab-btn" data-tab="register">Register</button>
+      </div>
+      
+      <!-- Messages -->
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+      <!-- Login Form -->
+      <div id="login-form" class="tab-content active">
+        <form method="post" action="{% url 'voting:voter_login' %}" class="auth-form">
+          {% csrf_token %}
+          <input type="hidden" name="form_type" value="login">
+          
+          <div class="form-group">
+            <label for="student_id">Student ID</label>
+            <div class="input-group">
+              <i class="fas fa-user"></i>
+              <input type="text" id="student_id" name="student_id" placeholder="Enter your student ID" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-group">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="password" name="password" placeholder="Enter your password" required>
+              <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+            </div>
+          </div>
+          
+          <div class="form-group remember-me">
+            <input type="checkbox" id="remember_me" name="remember_me">
+            <label for="remember_me">Remember me</label>
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        </form>
+      </div>
+      
+      <!-- Registration Form -->
+      <div id="register-form" class="tab-content">
+        <form method="post" action="{% url 'voting:register' %}" class="auth-form">
+          {% csrf_token %}
+          <input type="hidden" name="form_type" value="register">
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="first_name">First Name</label>
+              <input type="text" id="first_name" name="first_name" required>
+            </div>
+            <div class="form-group">
+              <label for="middle_name">Middle Name</label>
+              <input type="text" id="middle_name" name="middle_name">
+            </div>
+            <div class="form-group">
+              <label for="last_name">Last Name</label>
+              <input type="text" id="last_name" name="last_name" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="id_number">Student ID</label>
+            <input type="text" id="id_number" name="id_number" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="password1">Password</label>
+            <input type="password" id="password1" name="password1" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="password2">Confirm Password</label>
+            <input type="password" id="password2" name="password2" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="grade_level">Grade Level</label>
+            <select id="grade_level" name="grade_level" required>
+              <option value="">Select Grade Level</option>
+              <option value="7">Grade 7</option>
+              <option value="8">Grade 8</option>
+              <option value="9">Grade 9</option>
+              <option value="10">Grade 10</option>
+              <option value="11">Grade 11</option>
+              <option value="12">Grade 12</option>
+            </select>
+          </div>
+          
+          <div class="form-group" id="strand-group" style="display: none;">
+            <label for="strand">Strand</label>
+            <select id="strand" name="strand">
+              <option value="">Select Strand</option>
+              <option value="STEM">STEM</option>
+              <option value="HUMSS">HUMSS</option>
+              <option value="ABM">ABM</option>
+              <option value="GAS">GAS</option>
+              <option value="TVL">TVL</option>
+            </select>
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </form>
+      </div>
+    </div>
+    
+    <form id="loginForm" method="post" action="{% url 'voting:student_login' %}">
+      {% csrf_token %}
+      
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}" style="color: #e74c3c; margin-bottom: 15px; font-size: 14px;">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+      
+      <div class="form-group">
+        <label for="username">Student ID or Email</label>
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            placeholder="Enter your student ID or email" 
+            required
+            autocomplete="username"
+          >
+        </div>
+        <div id="usernameError" class="error-message"></div>
+      </div>
+      
+      <div class="form-group">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <label for="password">Password</label>
+          <a href="#" class="forgot-password">Forgot Password?</a>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="Enter your password" 
+            required
+            autocomplete="current-password"
+          >
+          <i class="fas fa-eye" id="togglePassword" style="left: auto; right: 15px; cursor: pointer;"></i>
+        </div>
+        <div id="passwordError" class="error-message"></div>
+      </div>
+      
+      <div class="form-group" style="display: flex; align-items: center; margin-bottom: 15px;">
+        <input type="checkbox" id="remember_me" name="remember_me" style="width: auto; margin: 0 8px 0 0; padding: 0;">
+        <label for="remember_me" style="margin: 0; font-size: 13px; color: #555; cursor: pointer;">
+          Remember me
+        </label>
+      </div>
+      
+      <button type="submit" id="loginButton">
+        <span id="buttonText">Sign In</span>
+        <div id="buttonLoader" style="display: none;">
+          <i class="fas fa-spinner fa-spin"></i> Signing in...
+        </div>
+      </button>
+      
+      <div class="divider">or</div>
+      
+      <div class="login-footer">
+        Don't have an account? <a href="{% url 'voting:register' %}">Register here</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Tab switching
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const tabContents = document.querySelectorAll('.tab-content');
+      
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Remove active class from all buttons and contents
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+          
+          // Add active class to clicked button and corresponding content
+          button.classList.add('active');
+          const tabId = button.getAttribute('data-tab');
+          document.getElementById(`${tabId}-form`).classList.add('active');
+        });
+      });
+      const buttonText = document.getElementById('buttonText');
+      const buttonLoader = document.getElementById('buttonLoader');
+      
+      // Reset error messages
+      usernameError.style.display = 'none';
+      passwordError.style.display = 'none';
+      
+      // Validate username/email
+      if (!username) {
+        usernameError.textContent = 'Please enter your student ID or email';
+        usernameError.style.display = 'block';
+        isValid = false;
+      }
+      
+      // Validate password
+      if (!password) {
+        passwordError.textContent = 'Please enter your password';
+        passwordError.style.display = 'block';
+        isValid = false;
+      }
+      
+      if (isValid) {
+        // Show loading state
+        buttonText.style.display = 'none';
+        buttonLoader.style.display = 'block';
+        document.getElementById('loginButton').disabled = true;
+      } else {
+        e.preventDefault();
+      }
+    });
+    
+    // Remove disabled state if form validation fails after submission
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', function() {
+        document.getElementById('loginButton').disabled = false;
+        document.getElementById('buttonText').style.display = 'block';
+        document.getElementById('buttonLoader').style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>
