@@ -59,6 +59,8 @@
         padding: 0 !important;
         margin: 0 !important;
         animation: floatLogo 3s ease-in-out infinite;
+        mix-blend-mode: multiply;
+        filter: contrast(1.2) brightness(1.1);
     }
 
     .dashboard-logo:hover {
@@ -183,7 +185,7 @@
 
 {% block header %}
 <div class="d-flex align-items-center mb-4">
-    <img src="{% static 'voting/images/logo.png' %}" alt="Logo" class="me-3 dashboard-logo">
+    <img src="{% static 'voting/images/logo.png' %}" alt="Logo" class="me-3 dashboard-logo" id="dashboardHeaderLogo">
     <h1 class="mb-0" style="color: var(--text-on-green);">Admin Dashboard</h1>
 </div>
 {% endblock %}
