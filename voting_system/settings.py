@@ -132,7 +132,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
     os.path.join(BASE_DIR, 'voting/static'),
 ]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
