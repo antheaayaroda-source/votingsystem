@@ -13,8 +13,8 @@ urlpatterns = [
     # Add other app URLs here if needed
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve media files in both development and production
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Admin site customization (commented out)
 # admin.site.site_header = 'Voting System Admin'

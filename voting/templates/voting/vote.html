@@ -313,6 +313,18 @@
 
     #viewRulesBtn:hover { background: rgba(255,255,255,0.2) !important; }
 
+    #logoutModalBackdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 2000; }
+    #logoutModal { background: white; border-radius: 12px; padding: 24px; width: min(400px, 90vw); text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+    #logoutModal .icon { font-size: 48px; color: #dc3545; margin-bottom: 16px; }
+    #logoutModal h3 { margin: 0 0 12px 0; color: #333; font-size: 20px; }
+    #logoutModal p { margin: 0 0 24px 0; color: #666; font-size: 14px; }
+    #logoutModal .btn-group { display: flex; gap: 12px; justify-content: center; }
+    #logoutModal button { padding: 10px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
+    #logoutModal .btn-cancel { background: #6c757d; color: white; }
+    #logoutModal .btn-cancel:hover { background: #5a6268; }
+    #logoutModal .btn-confirm { background: #dc3545; color: white; }
+    #logoutModal .btn-confirm:hover { background: #c82333; }
+
     @media (max-width: 600px) {
       .header { flex-direction: column; gap: 8px; }
       .logo { 
@@ -331,12 +343,24 @@
   {% if user.is_authenticated %}
   <div class="topbar">
     <div class="welcome-name">Welcome! {{ user.get_full_name|default:user.username }}</div>
-    <form action="{% url 'voting:voter_logout' %}" method="post" style="display:inline;">
+    <form id="logoutForm" action="{% url 'voting:voter_logout' %}" method="post" style="display:inline;">
       {% csrf_token %}
-      <button type="submit" class="logout" style="background:none;border:none;color:#ffffff;font-weight:700;cursor:pointer;padding:6px 10px;">Log Out</button>
+      <button type="button" class="logout" onclick="showLogoutModal()">Log Out</button>
     </form>
   </div>
   {% endif %}
+
+  <div id="logoutModalBackdrop">
+    <div id="logoutModal">
+      <div class="icon">⚠️</div>
+      <h3>Confirm Logout</h3>
+      <p>Are you sure you want to log out?</p>
+      <div class="btn-group">
+        <button class="btn-cancel" onclick="closeLogoutModal()">Cancel</button>
+        <button class="btn-confirm" onclick="confirmLogout()">Yes, Log Out</button>
+      </div>
+    </div>
+  </div>
   <div class="container">
     <form id="voteForm" method="post">
       {% csrf_token %}
@@ -651,6 +675,22 @@
       rulesClose.addEventListener('click', closeRules);
       document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeRules(); });
     })();
+  </script>
+  <script>
+    function showLogoutModal() {
+      document.getElementById('logoutModalBackdrop').style.display = 'flex';
+    }
+    function closeLogoutModal() {
+      document.getElementById('logoutModalBackdrop').style.display = 'none';
+    }
+    function confirmLogout() {
+      document.getElementById('logoutForm').submit();
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('logoutModalBackdrop').addEventListener('click', function(e) {
+        if (e.target === this) closeLogoutModal();
+      });
+    });
   </script>
 </body>
 </html>
